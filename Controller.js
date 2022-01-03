@@ -10,7 +10,7 @@ class Controller {
 const app = new Controller(new Model(), new View());
 
 
-function grid(){
+function creategrid(){
     var canvas = document.getElementById('canvas');
     // canvas.beginPath();
     canvas.rect(10, 10, 800, 800);
