@@ -1,1 +1,3 @@
-a
+class Model {
+    constructor(){}
+}

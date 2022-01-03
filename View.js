@@ -1,1 +1,3 @@
-aa
+class View {
+    constructor(){}
+}
