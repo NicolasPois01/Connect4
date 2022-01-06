@@ -16,7 +16,7 @@ class Model {
         }
     }
 
-    deleteMatrix(){
+    clearMatrix(){
         this.matrix = [];
     }
 
@@ -162,7 +162,7 @@ class Model {
 }
 
 const model = new Model();
-model.deleteMatrix();
+model.clearMatrix();
 model.createMatrix();
 model.gameEngine();
 
