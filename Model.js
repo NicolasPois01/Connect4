@@ -38,92 +38,139 @@ class Model {
         }
     }
 
-    exploreForConnects(line, row, player){
+    exploreForConnects(line, row, board, player){
         let connectedTokens = 1;
         let currentLine = line;
         let currentRow = row;
-        while (currentLine != 0 && currentRow != 0 && this.matrix[currentLine - 1][currentRow - 1] == player){
+        let maxConnectedTokens = 1;
+        while (currentLine != 0 && currentRow != 0 && board[currentLine - 1][currentRow - 1] == player){
             ++connectedTokens;
             --currentLine;
             --currentRow;
-            if (connectedTokens == 4) return true;
-            console.log("Test 1");
+            if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
         };
 
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentLine != 0 && this.matrix[currentLine - 1][currentRow] == player){
+        while (currentLine != 0 && board[currentLine - 1][currentRow] == player){
             ++connectedTokens;
             --currentLine;
-            if (connectedTokens == 4) return true;
+            if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
         }
 
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentLine != 0 && currentRow != 6 && this.matrix[currentLine - 1][currentRow + 1] == player){
+        while (currentLine != 0 && currentRow != 6 && board[currentLine - 1][currentRow + 1] == player){
             ++connectedTokens;
             --currentLine;
             ++currentRow;
-            if (connectedTokens == 4) return true;
+            if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
         }
 
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentRow != 6 && this.matrix[currentLine][currentRow + 1] == player){
+        while (currentRow != 6 && board[currentLine][currentRow + 1] == player){
             ++connectedTokens;
             ++currentRow;
-            if (connectedTokens == 4) return true;
+            if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
         }
 
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentLine != 5 && currentRow != 6 && this.matrix[currentLine + 1][currentRow + 1] == player){
-            console.log("Entree while");
+        while (currentLine != 5 && currentRow != 6 && board[currentLine + 1][currentRow + 1] == player){
             ++connectedTokens;
             ++currentLine;
             ++currentRow;
-            if (connectedTokens == 4) return true;
+            if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
         }
 
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentLine != 5 && this.matrix[currentLine + 1][currentRow] == player){
+        while (currentLine != 5 && board[currentLine + 1][currentRow] == player){
             ++connectedTokens;
             ++currentLine;
-            if (connectedTokens == 4) return true;
+            if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
         }
 
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while(currentLine != 5 && currentRow != 0 && this.matrix[currentLine + 1][currentRow - 1] == player){
+        while(currentLine != 5 && currentRow != 0 && board[currentLine + 1][currentRow - 1] == player){
             ++connectedTokens;
             ++currentLine;
             --currentRow;
-            if (connectedTokens == 4) return true;
+            if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
         }
 
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while(currentRow != 0 && this.matrix[currentLine][currentRow - 1] == player){
+        while(currentRow != 0 && board[currentLine][currentRow - 1] == player){
             ++connectedTokens;
             --currentRow;
-            if (connectedTokens == 4) return true;
+            if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
         }
-        return false;
+        return maxConnectedTokens;
     }
 
-    checkWin(player){
-        for (let line = 0; line < 6; ++line){
-            for (let row = 0; row < 7; ++row){
-                if (this.matrix[line][row] == player){
-                    if (this.exploreForConnects(line, row, player)) return true;
+    evaluatePosisition(){
+        let firstPlayerScore = 0;
+        let secondPlayerScore = 0;
+        let globalScore = 0;
+        let numberOfConnections = 1;
+
+        for (let line = 0; line < 5; ++line){
+            for ( let row = 0; row < 6; ++row){
+                numberOfConnections = this.exploreForConnects(line, row, 1);
+                switch (numberOfConnections){
+                    case 2:
+                        firstPlayerScore += 10;
+                        break;
+                    
+                    case 3: 
+                        firstPlayerScore += 30;
+                        break;
+
+                    case 4:
+                        firstPlayerScore += 999;
+                }
+
+                numberOfConnections = this.exploreForConnects(line, row, 2);
+                switch (numberOfConnections){
+                    case 2:
+                        secondPlayerScore += 10;
+                        break;
+
+                    case 3:
+                        secondPlayerScore += 30;
+                        break;
+
+                    case 4:
+                        secondPlayerScore += 999;
+                        break;
+                }
+            }
+        }
+        globalScore = firstPlayerScore - secondPlayerScore;
+        return globalScore;
+    }
+
+    miniMax (position, depth, alpha, beta, maximizingPlayerOne){
+        if (depth == 0){
+
+        }
+    }
+
+    checkWin(player, board){
+        for (let line = 0; line < 5; ++line){
+            for (let row = 0; row < 6; ++row){
+                if (board[line][row] == player){
+                    if (this.exploreForConnects(line, row, player) == 4) return true;
                 }
             }
         }
@@ -138,7 +185,7 @@ class Model {
 
         this.matrix[this.findFirstEmptySpot(row)][row] = player;
 
-        this.gameOver = this.checkWin(player);
+        this.gameOver = this.checkWin(player, this.matrix);
 
         this.firstPlayerToplay = !this.firstPlayerToplay;
     }
