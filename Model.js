@@ -24,17 +24,17 @@ class Model {
         console.log(this.matrix);
     }
 
-    isRowFull(row){
+    isRowFull(board, row){
         for (let line = 0; line < 6; ++line){
-            if (this.matrix[line][row] == 0) return false;
+            if (board[line][row] == 0) return false;
         }
         return true;
     }
 
-    findFirstEmptySpot(row){
+    findFirstEmptySpot(board, row){
         for (let line = 5; line >= 0; --line){
             console.log("Line : " + line);
-            if (this.matrix[line][row] == 0) return line;
+            if (board[line][row] == 0) return line;
         }
     }
 
@@ -118,7 +118,7 @@ class Model {
         return maxConnectedTokens;
     }
 
-    evaluatePosisition(){
+    evaluatePosisition(board){
         let firstPlayerScore = 0;
         let secondPlayerScore = 0;
         let globalScore = 0;
@@ -126,7 +126,7 @@ class Model {
 
         for (let line = 0; line < 5; ++line){
             for ( let row = 0; row < 6; ++row){
-                numberOfConnections = this.exploreForConnects(line, row, 1);
+                numberOfConnections = this.exploreForConnects(line, row, board, 1);
                 switch (numberOfConnections){
                     case 2:
                         firstPlayerScore += 10;
@@ -140,7 +140,7 @@ class Model {
                         firstPlayerScore += 999;
                 }
 
-                numberOfConnections = this.exploreForConnects(line, row, 2);
+                numberOfConnections = this.exploreForConnects(line, row, board, 2);
                 switch (numberOfConnections){
                     case 2:
                         secondPlayerScore += 10;
@@ -160,30 +160,76 @@ class Model {
         return globalScore;
     }
 
-    miniMax (position, depth, alpha, beta, maximizingPlayerOne){
-        if (depth == 0){
-
-        }
-    }
-
     checkWin(player, board){
         for (let line = 0; line < 5; ++line){
             for (let row = 0; row < 6; ++row){
                 if (board[line][row] == player){
-                    if (this.exploreForConnects(line, row, player) == 4) return true;
+                    if (this.exploreForConnects(line, row, board, player) == 4) return true;
                 }
             }
         }
     }
 
+    getChildrenOfPosition(board, player){
+        children = new Array(new Array(new Array()));
+        let i = 0;
+        for (let row = 0; row < 7; ++row){
+            if (!this.isRowFull(board, row)){
+                children[i] = board;
+                children[i][this.findFirstEmptySpot(board, row)][row] = player;
+                ++i;
+            }
+        }
+        return children;
+    }
+
+    miniMax (board, depth, alpha, beta, maximizingPlayerOne){
+        if (depth == 0 || this.checkWin(1, board) || this.checkWin(2, board)){
+            return this.evaluatePosisition(board);
+        }
+
+        let maxEval;
+        let minEval
+        let eval;
+        let player;
+        let children
+
+        if (maximizingPlayerOne){
+            maxEval = -9999;
+            player = 1;
+
+            children = this.getChildrenOfPosition(board, player);
+            for (let child in children){
+                eval = this.miniMax(child, depth - 1, alpha, beta, false);
+                if (eval > maxEval) maxEval = eval;
+                if (eval > alpha) alpha = eval;
+                if (beta <= alpha) break;
+            }
+            return maxEval;
+        }
+        else {
+            minEval = 9999;
+            player = 2;
+
+            children = this.getChildrenOfPosition(board, player);
+            for (let child in children){
+                eval = this.miniMax(child, depth - 1, alpha, beta, true);
+                if (eval < minEval) minEval = eval;
+                if (eval < beta) beta = eval;
+                if (beta <= alpha) break;
+            } 
+            return minEval;
+        }
+    }
+
     playTurn(row){
-        if (this.isRowFull(row)) return;
+        if (this.isRowFull(this.matrix, row)) return;
 
         let player;
         if (this.firstPlayerToplay) player = 1;
-        else player =2;
+        else player = 2;
 
-        this.matrix[this.findFirstEmptySpot(row)][row] = player;
+        this.matrix[this.findFirstEmptySpot(this.matrix, row)][row] = player;
 
         this.gameOver = this.checkWin(player, this.matrix);
 
@@ -211,5 +257,9 @@ class Model {
 const model = new Model();
 model.clearMatrix();
 model.createMatrix();
-model.gameEngine();
-
+//model.gameEngine();
+test3D = new Array(new Array(new Array));
+for (let i = 0; i < 7; ++i){
+    test3D[i] = model.matrix;
+}
+console.log(test3D);
