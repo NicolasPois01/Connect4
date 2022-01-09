@@ -1,11 +1,14 @@
 class Model {
     matrix = new Array(7);
-    firstPlayerToplay = true;
+    firstPlayerToPlay = true;
     gameOver = false;
+    botTurn = 2; //The bot plays as second player by default
+    botDepth = 5;
 
     constructor(){}
 
-    createMatrix(){
+    //Create the empty board game
+    createMatrix(){ 
         for (let line = 0; line < 6; ++line){
             this.matrix[line] = new Array(7);
         }
@@ -16,28 +19,33 @@ class Model {
         }
     }
 
-    clearMatrix(){
+    //Empty the board
+    clearMatrix(){ 
         this.matrix = [];
     }
 
+    // Display the actual state of the game
     showMatrix(){
         console.log(this.matrix);
     }
 
-    isRowFull(board, row){
+    // Check if the row is full
+    isRowFull(board, row){ 
         for (let line = 0; line < 6; ++line){
             if (board[line][row] == 0) return false;
         }
         return true;
     }
 
-    findFirstEmptySpot(board, row){
+    // Find and return the position of the first line available in the row (starting from the bottom)
+    findFirstEmptySpot(board, row){ 
         for (let line = 5; line >= 0; --line){
             console.log("Line : " + line);
             if (board[line][row] == 0) return line;
         }
     }
 
+    // Explore the 8 directions from a specific token and return the number of connected tokens
     exploreForConnects(line, row, board, player){
         let connectedTokens = 1;
         let currentLine = line;
@@ -118,6 +126,7 @@ class Model {
         return maxConnectedTokens;
     }
 
+    // Read a board game and return a score depending on the number of connected tokens from each player
     evaluatePosisition(board){
         let firstPlayerScore = 0;
         let secondPlayerScore = 0;
@@ -160,6 +169,7 @@ class Model {
         return globalScore;
     }
 
+    // Check if a player has 4 connected tokens on the board
     checkWin(player, board){
         for (let line = 0; line < 5; ++line){
             for (let row = 0; row < 6; ++row){
@@ -168,8 +178,10 @@ class Model {
                 }
             }
         }
+        return false;
     }
 
+    // Generate and return a 3D array containing every possible next position from a board
     getChildrenOfPosition(board, player){
         children = new Array(new Array(new Array()));
         let i = 0;
@@ -183,16 +195,17 @@ class Model {
         return children;
     }
 
+    // Main recursive function of the bot that finds the best way to play
     miniMax (board, depth, alpha, beta, maximizingPlayerOne){
         if (depth == 0 || this.checkWin(1, board) || this.checkWin(2, board)){
             return this.evaluatePosisition(board);
         }
 
         let maxEval;
-        let minEval
-        let eval;
+        let minEval;
+        let evaluation;
         let player;
-        let children
+        let children;
 
         if (maximizingPlayerOne){
             maxEval = -9999;
@@ -200,9 +213,9 @@ class Model {
 
             children = this.getChildrenOfPosition(board, player);
             for (let child in children){
-                eval = this.miniMax(child, depth - 1, alpha, beta, false);
-                if (eval > maxEval) maxEval = eval;
-                if (eval > alpha) alpha = eval;
+                evaluation = this.miniMax(child, depth - 1, alpha, beta, false);
+                if (evaluation > maxEval) maxEval = evaluation;
+                if (evaluation > alpha) alpha = evaluation;
                 if (beta <= alpha) break;
             }
             return maxEval;
@@ -213,38 +226,55 @@ class Model {
 
             children = this.getChildrenOfPosition(board, player);
             for (let child in children){
-                eval = this.miniMax(child, depth - 1, alpha, beta, true);
-                if (eval < minEval) minEval = eval;
-                if (eval < beta) beta = eval;
+                evaluation = this.miniMax(child, depth - 1, alpha, beta, true);
+                if (evaluation < minEval) minEval = evaluation;
+                if (evaluation < beta) beta = evaluation;
                 if (beta <= alpha) break;
             } 
             return minEval;
         }
     }
 
-    playTurn(row){
+    // Allow a player to play his turn
+    playTurn(row, player){
         if (this.isRowFull(this.matrix, row)) return;
-
-        let player;
-        if (this.firstPlayerToplay) player = 1;
-        else player = 2;
 
         this.matrix[this.findFirstEmptySpot(this.matrix, row)][row] = player;
 
         this.gameOver = this.checkWin(player, this.matrix);
-
-        this.firstPlayerToplay = !this.firstPlayerToplay;
     }
 
+    playBotTurn(player){
+
+    }
+
+    // Main function of the program. Breaks when the game is over
     gameEngine(){
-        let input;
+        let input = -1;
         
-        while (this.gameEngine){
-            this.showMatrix();
-            console.log("Select a row from 0 to 6");
-            input = prompt();
+        while (!this.gameOver){
+
+            let player;
+            if (this.firstPlayerToPlay) player = 1;
+            else player = 2;
+
+            if (this.botTurn != player){ // Turn of a player
+                this.showMatrix();
+                while (input < 0 || input > 6){
+                    console.log("Select a row from 0 to 6");
+                    input = prompt();
+                }
+                while (this.isRowFull(input)){
+                    console.log("Select a row from 0 to 6");
+                    input = prompt();
+                }
+                this.playTurn(input, player);
+                this.firstPlayerToPlay = !this.firstPlayerToPlay;
+            }
+
+            
             if (input == "kill") break;
-            this.playTurn(input);
+            this.playTurn(input, player);
         }
 
         console.log(this.gameOver);
@@ -258,8 +288,3 @@ const model = new Model();
 model.clearMatrix();
 model.createMatrix();
 //model.gameEngine();
-test3D = new Array(new Array(new Array));
-for (let i = 0; i < 7; ++i){
-    test3D[i] = model.matrix;
-}
-console.log(test3D);
