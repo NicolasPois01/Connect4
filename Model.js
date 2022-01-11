@@ -19,6 +19,10 @@ class Model {
         }
     }
 
+    setBotTurn(turn){
+        this.botTurn = turn;
+    }
+
     //Empty the board
     clearMatrix(){ 
         this.matrix = [];
@@ -181,18 +185,21 @@ class Model {
         return false;
     }
 
-    // Generate and return a 3D array containing every possible next position from a board
+    // Generate and return a 4D array containing every possible next position from a board (3D) and the row used to get the new position
     getChildrenOfPosition(board, player){
-        children = new Array(new Array(new Array()));
+        children = new Array(new Array(new Array(new Array())));
         let i = 0;
         for (let row = 0; row < 7; ++row){
             if (!this.isRowFull(board, row)){
-                children[i] = board;
-                children[i][this.findFirstEmptySpot(board, row)][row] = player;
+                children[0][i] = board; 
+                children[0][i][this.findFirstEmptySpot(board, row)][row] = player;
+                children[1] = i;
                 ++i;
             }
         }
-        return children;
+        return children; 
+        // children[0] contains the array of the 0-7 next possible positions
+        // children[1] contains the row used to reach those positions
     }
 
     // Main recursive function of the bot that finds the best way to play
@@ -206,6 +213,7 @@ class Model {
         let evaluation;
         let player;
         let children;
+        let lastRow;
 
         if (maximizingPlayerOne){
             maxEval = -9999;
@@ -213,8 +221,12 @@ class Model {
 
             children = this.getChildrenOfPosition(board, player);
             for (let child in children){
-                evaluation = this.miniMax(child, depth - 1, alpha, beta, false);
-                if (evaluation > maxEval) maxEval = evaluation;
+                evaluation = this.miniMax(child[0], depth - 1, alpha, beta, false);
+                if (evaluation > maxEval) {
+                    maxEval = evaluation;
+                    if (depth == 1) lastRow = child[1];
+                }
+                
                 if (evaluation > alpha) alpha = evaluation;
                 if (beta <= alpha) break;
             }
@@ -227,7 +239,10 @@ class Model {
             children = this.getChildrenOfPosition(board, player);
             for (let child in children){
                 evaluation = this.miniMax(child, depth - 1, alpha, beta, true);
-                if (evaluation < minEval) minEval = evaluation;
+                if (evaluation < minEval){
+                    minEval = evaluation;
+                    if (depth == 1) lastRow = child[1];
+                }
                 if (evaluation < beta) beta = evaluation;
                 if (beta <= alpha) break;
             } 
@@ -242,15 +257,13 @@ class Model {
         this.matrix[this.findFirstEmptySpot(this.matrix, row)][row] = player;
 
         this.gameOver = this.checkWin(player, this.matrix);
-    }
 
-    playBotTurn(player){
-
+        this.firstPlayerToPlay = !this.firstPlayerToPlay;
     }
 
     // Main function of the program. Breaks when the game is over
     gameEngine(){
-        let input = -1;
+        let input;
         
         while (!this.gameOver){
 
@@ -259,22 +272,21 @@ class Model {
             else player = 2;
 
             if (this.botTurn != player){ // Turn of a player
+                input = -1;
                 this.showMatrix();
                 while (input < 0 || input > 6){
                     console.log("Select a row from 0 to 6");
                     input = prompt();
                 }
-                while (this.isRowFull(input)){
+                while (this.isRowFull(this.matrix, input)){
                     console.log("Select a row from 0 to 6");
                     input = prompt();
                 }
                 this.playTurn(input, player);
-                this.firstPlayerToPlay = !this.firstPlayerToPlay;
             }
 
             
             if (input == "kill") break;
-            this.playTurn(input, player);
         }
 
         console.log(this.gameOver);
@@ -287,4 +299,5 @@ class Model {
 const model = new Model();
 model.clearMatrix();
 model.createMatrix();
-//model.gameEngine();
+model.setBotTurn(0);
+model.gameEngine();
