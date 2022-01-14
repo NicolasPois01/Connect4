@@ -4,3 +4,15 @@
 #container{
   text-align: center;
 }
+.div_input_box{
+  background-color: yellow;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  width: 5rem;
+  height: 5rem;
+}
+
+.div_flex_container{
+  display: flex;
+  flex-direction: row;
+}
