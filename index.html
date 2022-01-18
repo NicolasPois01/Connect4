@@ -4,22 +4,25 @@
 	<link rel="stylesheet" href="index.css">
 </head>
 <body>
+	
     <h1>Test</h1>
     
 	<div class="div_flex_container">
-		<div class="div_input_box" id="1"><a href="">1</a></div>
-		<div class="div_input_box" id="2"><a href="">2</a></div>
-		<div class="div_input_box" id="3"><a href="">3</a></div>
-		<div class="div_input_box" id="4"><a href="">4</a></div>
-		<div class="div_input_box" id="5"><a href="">5</a></div>
-		<div class="div_input_box" id="6"><a href="">6</a></div>
-		<div class="div_input_box" id="7"><a href="">7</a></div>
+		<button class="button_input_box" id="b0"></button>
+		<button class="button_input_box" id="b1"></button>
+		<button class="button_input_box" id="b2"></button>
+		<button class="button_input_box" id="b3"></button>
+		<button class="button_input_box" id="b4"></button>
+		<button class="button_input_box" id="b5"></button>
+		<button class="button_input_box" id="b6"></button>
 	</div>
 	
 
 
-    <canvas id="canvas" width="1000" height="1000">Your browser does not support the HTML5 canvas tag.</canvas>
+    <canvas id="grid" width="800" height="700">Your browser does not support the HTML5 canvas tag.</canvas>
+	<canvas id="gridTokens" width="800" height="700"></canvas>
     
-	<script src="./View.js"></script>
+	<script type="module" src="./Controller.js"></script>
+	<!--<script src="./View.js"></script>-->
 	<!--<script src="./Model.js"></script>-->
 </body>

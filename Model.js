@@ -1,3 +1,5 @@
+import Controller from "./Controller";
+
 class Model {
     matrix = new Array(7);
     firstPlayerToPlay = true;
@@ -185,21 +187,24 @@ class Model {
         return false;
     }
 
-    // Generate and return a 4D array containing every possible next position from a board (3D) and the row used to get the new position
+    // Check if there is a legal move to play
+    checkTie(board){
+        for (let row = 0; row < 7; ++row){
+            if (!this.isRowFull(board, row)) return false;
+        }
+        return true;
+    }
+
+    // Generate and return a 3D array containing every possible next position from a board
     getChildrenOfPosition(board, player){
-        children = new Array(new Array(new Array(new Array())));
-        let i = 0;
+        children = new Array(new Array(new Array()));
         for (let row = 0; row < 7; ++row){
             if (!this.isRowFull(board, row)){
-                children[0][i] = board; 
-                children[0][i][this.findFirstEmptySpot(board, row)][row] = player;
-                children[1] = i;
-                ++i;
+                children[row] = board; 
+                children[row][this.findFirstEmptySpot(board, row)][row] = player;
             }
         }
         return children; 
-        // children[0] contains the array of the 0-7 next possible positions
-        // children[1] contains the row used to reach those positions
     }
 
     // Main recursive function of the bot that finds the best way to play
@@ -213,7 +218,6 @@ class Model {
         let evaluation;
         let player;
         let children;
-        let lastRow;
 
         if (maximizingPlayerOne){
             maxEval = -9999;
@@ -221,12 +225,8 @@ class Model {
 
             children = this.getChildrenOfPosition(board, player);
             for (let child in children){
-                evaluation = this.miniMax(child[0], depth - 1, alpha, beta, false);
-                if (evaluation > maxEval) {
-                    maxEval = evaluation;
-                    if (depth == 1) lastRow = child[1];
-                }
-
+                evaluation = this.miniMax(child, depth - 1, alpha, beta, false);
+                if (evaluation > maxEval) maxEval = evaluation;
                 if (evaluation > alpha) alpha = evaluation;
                 if (beta <= alpha) break;
             }
@@ -239,10 +239,7 @@ class Model {
             children = this.getChildrenOfPosition(board, player);
             for (let child in children){
                 evaluation = this.miniMax(child, depth - 1, alpha, beta, true);
-                if (evaluation < minEval){
-                    minEval = evaluation;
-                    if (depth == 1) lastRow = child[1];
-                }
+                if (evaluation < minEval) minEval = evaluation;
                 if (evaluation < beta) beta = evaluation;
                 if (beta <= alpha) break;
             } 
@@ -255,6 +252,7 @@ class Model {
         if (this.isRowFull(this.matrix, row)) return;
 
         this.matrix[this.findFirstEmptySpot(this.matrix, row)][row] = player;
+        this.Controller.updateBoard(this.board);
 
         this.gameOver = this.checkWin(player, this.matrix);
 
@@ -291,8 +289,6 @@ class Model {
 
         console.log(this.gameOver);
         this.showMatrix();
-
-
     }
 }
 
@@ -300,4 +296,6 @@ const model = new Model();
 model.clearMatrix();
 model.createMatrix();
 model.setBotTurn(0);
-model.gameEngine();
+//model.gameEngine();
+
+export default class{};
