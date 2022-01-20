@@ -1,14 +1,12 @@
-import Controller from './Controller';
 class View {
-  /** @type {HTMLCanvasElement}*/grid;
-  /** @type {CanvasRenderingContext2D}*/gridCtx;
-  tokens;
-  tokensCtx;
   constructor(){
     this.grid = document.getElementById('grid');
     this.gridCtx = this.grid.getContext('2d');
     this.tokens = document.getElementById('gridTokens');
     this.tokensCtx = this.tokens.getContext('2d');
+    this.drawGrid();
+    this.drawCircle();
+    this.initEvents();
   }
 
   drawGrid(){
@@ -57,7 +55,37 @@ class View {
   }
 
   bindFindFirstEmptySpot(callback){
-    this.FindFirstEmptySpot = callback;
+    this.findFirstEmptySpot = callback;
+  }
+
+  bindGetMatrix(callback){
+    this.getMatrix = callback;
+  }
+
+  bindIsRowFull(callback){
+    this.isRowFull = callback;
+  }
+
+  bindGetFirstPlayerToPlay(callback){
+    this.getFirstPlayerToPlay = callback;
+  }
+
+  bindSetMatrixElement(callback){
+    this.setMatrixElement = callback;
+  }
+
+  bounceToken(y, row, color){
+    this.tokensCtx.beginPath();
+    this.tokensCtx.clearRect(0, 0, 10000, 10000);
+    this.tokensCtx.closePath();
+    this.tokensCtx.fillStyle = 'white';
+    this.tokensCtx.fill();
+
+    this.tokensCtx.beginPath();
+    this.tokensCtx.arc(100*(1+row), y - 10, 40, 0, Math.PI*2, true);
+    this.tokensCtx.closePath();
+    this.tokensCtx.fillStyle = color;
+    this.tokensCtx.fill();
   }
 
   moveToken(y, row, color){
@@ -85,11 +113,13 @@ class View {
     this.tokensCtx.fillStyle = color;
     this.tokensCtx.fill();
 
-    while (y <= (line + 1) * 100 - 10){
+    while (y <= (line + 1) * 100 - 10 && y < 600){
       await sleep(10);
       this.moveToken(y, row, color);
       y += 10;
     }
+
+
     
   }
   testViewClick(){
@@ -99,7 +129,15 @@ class View {
   initEvents(){
     let b0 = document.getElementById("b0");
     b0.addEventListener('click', () => {
-      let line = Controller.callFindFirstEmptySpot(Controller.getBoard(), 0);
+      if (!this.isRowFull(this.getMatrix(), 0)){
+        let line = this.findFirstEmptySpot(this.getMatrix(), 0);
+        let player;
+        if (this.getFirstPlayerToPlay) player = 1;
+        else player = 2;
+        this.addToken(0, line, player);
+        this.setMatrixElement(0, line, player);
+      }
+      
 
     });
     let b1 = document.getElementById("b1");
@@ -138,11 +176,11 @@ function sleep(time){
   })
 }
 
-let view = new View()
-view.drawGrid();
+
+//view.drawGrid();
 //view.drawCircle();
-view.initEvents();
-view.addToken(0, 4, 1);
+//view.initEvents();
+//view.addToken(0, 5, 1);
 
 
-export default class{};
+export {View};

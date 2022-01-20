@@ -1,13 +1,14 @@
-import Controller from "./Controller";
-
 class Model {
-    matrix = new Array(7);
-    firstPlayerToPlay = true;
-    gameOver = false;
-    botTurn = 2; //The bot plays as second player by default
-    botDepth = 5;
+    constructor(){
+        this.matrix = new Array(7);
+        this.frstPlayerToPlay = true;
+        this.gameOver = false;
+        this.botTurn = 2;
+        this.botDepth = 5;
 
-    constructor(){}
+        this.createMatrix();
+        this.setBotTurn(0);
+    }
 
     //Create the empty board game
     createMatrix(){ 
@@ -30,6 +31,18 @@ class Model {
         this.matrix = [];
     }
 
+    getMatrix(){
+        return this.matrix;
+    }
+
+    setMatrixElement(row, line, value){
+        this.matrix[row][line] = value;
+    }
+
+    getFirstPlayerToPlay(){
+        return this.firstPlayerToPlay;
+    }
+
     // Display the actual state of the game
     showMatrix(){
         console.log(this.matrix);
@@ -37,6 +50,8 @@ class Model {
 
     // Check if the row is full
     isRowFull(board, row){ 
+        console.log(this.getMatrix());
+        console.log(board, row);
         for (let line = 0; line < 6; ++line){
             if (board[line][row] == 0) return false;
         }
@@ -45,8 +60,8 @@ class Model {
 
     // Find and return the position of the first line available in the row (starting from the bottom)
     findFirstEmptySpot(board, row){ 
+        console.log(board, row);
         for (let line = 5; line >= 0; --line){
-            console.log("Line : " + line);
             if (board[line][row] == 0) return line;
         }
     }
@@ -252,7 +267,6 @@ class Model {
         if (this.isRowFull(this.matrix, row)) return;
 
         this.matrix[this.findFirstEmptySpot(this.matrix, row)][row] = player;
-        this.Controller.updateBoard(this.board);
 
         this.gameOver = this.checkWin(player, this.matrix);
 
@@ -292,10 +306,10 @@ class Model {
     }
 }
 
-const model = new Model();
-model.clearMatrix();
-model.createMatrix();
-model.setBotTurn(0);
+//const model = new Model();
+//model.clearMatrix();
+//model.createMatrix();
+//model.setBotTurn(0);
 //model.gameEngine();
 
-export default class{};
+export {Model};
