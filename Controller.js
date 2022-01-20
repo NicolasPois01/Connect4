@@ -18,7 +18,13 @@ class Controller {
         this.view.bindGetFirstPlayerToPlay(this.bindGetFirstPlayerToPlay);
 
         this.bindSetMatrixElement = this.bindSetMatrixElement.bind(this);
-        this.view.bindSetMatrixElement(this.bindGetMatrix);
+        this.view.bindSetMatrixElement(this.bindSetMatrixElement);
+
+        this.bindPlayTurn = this.bindPlayTurn.bind(this);
+        this.view.bindPlayTurn(this.bindPlayTurn);
+
+        this.bindAddToken = this.bindAddToken.bind(this);
+        this.model.bindAddToken(this.bindAddToken);
     }
 
     bindFindFirstEmptySpot(board, row){
@@ -37,8 +43,16 @@ class Controller {
         return this.model.getFirstPlayerToPlay();
     }
 
-    bindSetMatrixElement(row, line, value){
-        return this.model.setMatrixElement(row, line, value);
+    bindSetMatrixElement(line, row, value){
+        this.model.setMatrixElement(line, row, value);
+    }
+
+    bindPlayTurn(row){
+        this.model.playTurn(row);
+    }
+
+    bindAddToken(row, line, player){
+        this.view.addToken(row, line, player);
     }
 
     getBoard(){
