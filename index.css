@@ -1,6 +1,49 @@
-#canvas{
-  background-color: blue;
+#grid{
+  position: absolute;
+  z-index: 0;
+  background: transparent;
 }
+
+#gridTokens{
+  position: absolute;
+  z-index: -1;
+  background: transparent;
+}
+
 #container{
   text-align: center;
+}
+
+#start{
+  margin : 0.8rem;
+  width: 4rem;
+  height: 2rem;
+}
+
+#menu{
+    border-radius:50px;   
+}
+
+.button_input_box{
+  margin: 0.9rem;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius:50px;   
+  opacity: 0.4;
+}
+.button_input_box:hover{
+  opacity: 1;
+}
+
+.div_flex_container{
+  display: flex;
+  flex-direction: row;
+  margin-left: 3.5rem;
+}
+
+.menu{
+  background-color: orange;
+  margin-left: 60rem;
+  margin-right: 2 0rem;
+  padding:  1rem;
 }

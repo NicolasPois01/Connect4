@@ -1,21 +1,43 @@
 <!DOCTYPE html>
 <head>
 	<meta charset="utf-8">
+	<link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <h1>Test</h1>
+	
+    <h1>Puissance 4</h1>
     
-</body>
-	<div style="position:absolute;width:80px;background-color:yellow;text-align:center;height:80px;margin-top:10px; margin-left:55px;" id="1"><a href="">1</a></div>
-	<div style="position:absolute;width:80px;background-color:yellow;text-align:center;height:80px;margin-top:10px; margin-left:155px;" id="2"><a href="">2</a></div>
-	<div style="position:absolute;width:80px;background-color:yellow;text-align:center;height:80px;margin-top:10px; margin-left:255px;" id="3"><a href="">3</a></div>
-	<div style="position:absolute;width:80px;background-color:yellow;text-align:center;height:80px;margin-top:10px; margin-left:355px;" id="4"><a href="">4</a></div>
-	<div style="position:absolute;width:80px;background-color:yellow;text-align:center;height:80px;margin-top:10px; margin-left:455px;" id="5"><a href="">5</a></div>
-	<div style="position:absolute;width:80px;background-color:yellow;text-align:center;height:80px;margin-top:10px; margin-left:555px;" id="6"><a href="">6</a></div>
-	<div style="position:absolute;width:80px;background-color:yellow;text-align:center;height:80px;margin-top:10px; margin-left:655px;" id="7"><a href="">7</a></div>
+	<div class="div_flex_container">
+		<button class="button_input_box" id="b0"></button>
+		<button class="button_input_box" id="b1"></button>
+		<button class="button_input_box" id="b2"></button>
+		<button class="button_input_box" id="b3"></button>
+		<button class="button_input_box" id="b4"></button>
+		<button class="button_input_box" id="b5"></button>
+		<button class="button_input_box" id="b6"></button>
+	</div>
+	
 
+	<div class="menu">
+		<div>
+			<input type="checkbox" id="ia" name="ia">
+			<label for="ia">Activate IA</label>
+		</div>
 
-    <canvas id="canvas" width="1000" height="1000">Your browser does not support the HTML5 canvas tag.</canvas>
+		<div>
+			<h1>Do you want to let the IA start ?</h1>
+			<input type="radio" name="IAStart" checked>
+		  	<label>yes</label>
+			<input type="radio" name="IAStart">
+			<label>no</label>
+		</div>
+			
+		<button id="start">Start</button>
+	</div>
+    <canvas id="grid" width="800" height="700">Your browser does not support the HTML5 canvas tag.</canvas>
+	<canvas id="gridTokens" width="800" height="700"></canvas>
     
-	<script src="./Model.js"></script>
+	<script type="module" src="./Controller.js"></script>
+	<!--<script src="./View.js"></script>-->
+	<!--<script src="./Model.js"></script>-->
 </body>
