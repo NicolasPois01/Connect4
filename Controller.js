@@ -18,7 +18,22 @@ class Controller {
         this.view.bindGetFirstPlayerToPlay(this.bindGetFirstPlayerToPlay);
 
         this.bindSetMatrixElement = this.bindSetMatrixElement.bind(this);
-        this.view.bindSetMatrixElement(this.bindGetMatrix);
+        this.view.bindSetMatrixElement(this.bindSetMatrixElement);
+
+        this.bindPlayTurn = this.bindPlayTurn.bind(this);
+        this.view.bindPlayTurn(this.bindPlayTurn);
+
+        this.bindAddToken = this.bindAddToken.bind(this);
+        this.model.bindAddToken(this.bindAddToken);
+
+        this.bindResetGame = this.bindResetGame.bind(this);
+        this.view.bindResetGame(this.bindResetGame);
+
+        this.bindSetBotTurn = this.bindSetBotTurn.bind(this);
+        this.view.bindSetBotTurn(this.bindSetBotTurn);
+
+        this.bindApplyOptions = this.bindApplyOptions.bind(this);
+        this.model.bindApplyOptions(this.bindApplyOptions);
     }
 
     bindFindFirstEmptySpot(board, row){
@@ -37,12 +52,28 @@ class Controller {
         return this.model.getFirstPlayerToPlay();
     }
 
-    bindSetMatrixElement(row, line, value){
-        return this.model.setMatrixElement(row, line, value);
+    bindSetMatrixElement(line, row, value){
+        this.model.setMatrixElement(line, row, value);
     }
 
-    getBoard(){
-        return this.board;
+    bindPlayTurn(row){
+        this.model.playTurn(row);
+    }
+
+    bindAddToken(row, line, player){
+        this.view.addToken(row, line, player);
+    }
+
+    bindResetGame(){
+        this.model.resetGame();
+    }
+
+    bindSetBotTurn(turn){
+        this.model.setBotTurn(turn);
+    }
+
+    bindApplyOptions(){
+        this.view.applyOptions();
     }
 }
 

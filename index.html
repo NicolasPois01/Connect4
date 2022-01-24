@@ -4,8 +4,27 @@
 	<link rel="stylesheet" href="index.css">
 </head>
 <body>
+
 	
-    <h1>Puissance 4</h1>
+
+	<div class="menu">
+   		<h1 id="textMenu">MENU</h1>
+		<div>
+			<input type="checkbox" id="ia" name="ia" onClick="TestCase">
+			<label for="ia">Activate IA</label>
+
+		</div>
+
+		<div>
+			<label>AI plays as</label>
+				<select name="player" id="select_player">
+					<option value="1">Player 1</option>
+					<option value="2">Player 2</option>
+				</select>
+		</div>
+		<button id="start">Start</button>
+		<button id="reset_button">Reset game</button>
+	</div>
     
 	<div class="div_flex_container">
 		<button class="button_input_box" id="b0"></button>
@@ -18,22 +37,7 @@
 	</div>
 	
 
-	<div class="menu">
-		<div>
-			<input type="checkbox" id="ia" name="ia">
-			<label for="ia">Activate IA</label>
-		</div>
 
-		<div>
-			<h1>Do you want to let the IA start ?</h1>
-			<input type="radio" name="IAStart" checked>
-		  	<label>yes</label>
-			<input type="radio" name="IAStart">
-			<label>no</label>
-		</div>
-			
-		<button id="start">Start</button>
-	</div>
     <canvas id="grid" width="800" height="700">Your browser does not support the HTML5 canvas tag.</canvas>
 	<canvas id="gridTokens" width="800" height="700"></canvas>
     

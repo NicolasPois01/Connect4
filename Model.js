@@ -1,13 +1,23 @@
 class Model {
     constructor(){
-        this.matrix = new Array(7);
-        this.frstPlayerToPlay = true;
+        this.matrix = new Array(6);
+        this.firstPlayerToPlay = true;
         this.gameOver = false;
         this.botTurn = 2;
         this.botDepth = 5;
+        this.botPlay
 
         this.createMatrix();
         this.setBotTurn(0);
+    }
+
+
+    bindAddToken(callback){
+        this.addToken = callback;
+    }
+
+    bindApplyOptions(callback){
+        this.applyOptions = callback;
     }
 
     //Create the empty board game
@@ -24,19 +34,21 @@ class Model {
 
     setBotTurn(turn){
         this.botTurn = turn;
+        console.log(this.botTurn);
     }
 
     //Empty the board
     clearMatrix(){ 
         this.matrix = [];
+        this.createMatrix();
     }
 
     getMatrix(){
         return this.matrix;
     }
 
-    setMatrixElement(row, line, value){
-        this.matrix[row][line] = value;
+    setMatrixElement(line, row, value){
+        this.matrix[line][row] = value;
     }
 
     getFirstPlayerToPlay(){
@@ -48,10 +60,15 @@ class Model {
         console.log(this.matrix);
     }
 
+    resetGame(){
+        this.clearMatrix();
+        this.gameOver = false;
+        this.firstPlayerToPlay = true;
+        this.applyOptions();
+    }
+
     // Check if the row is full
     isRowFull(board, row){ 
-        console.log(this.getMatrix());
-        console.log(board, row);
         for (let line = 0; line < 6; ++line){
             if (board[line][row] == 0) return false;
         }
@@ -60,7 +77,6 @@ class Model {
 
     // Find and return the position of the first line available in the row (starting from the bottom)
     findFirstEmptySpot(board, row){ 
-        console.log(board, row);
         for (let line = 5; line >= 0; --line){
             if (board[line][row] == 0) return line;
         }
@@ -72,7 +88,7 @@ class Model {
         let currentLine = line;
         let currentRow = row;
         let maxConnectedTokens = 1;
-        while (currentLine != 0 && currentRow != 0 && board[currentLine - 1][currentRow - 1] == player){
+        while (currentLine - 1 >= 0 && currentRow - 1 >= 0 && board[currentLine - 1][currentRow - 1] == player){
             ++connectedTokens;
             --currentLine;
             --currentRow;
@@ -82,7 +98,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentLine != 0 && board[currentLine - 1][currentRow] == player){
+        while (currentLine - 1 >= 0 && board[currentLine - 1][currentRow] == player){
             ++connectedTokens;
             --currentLine;
             if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
@@ -91,7 +107,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentLine != 0 && currentRow != 6 && board[currentLine - 1][currentRow + 1] == player){
+        while (currentLine - 1 >= 0 && currentRow + 1 <= 6 && board[currentLine - 1][currentRow + 1] == player){
             ++connectedTokens;
             --currentLine;
             ++currentRow;
@@ -101,7 +117,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentRow != 6 && board[currentLine][currentRow + 1] == player){
+        while (currentRow + 1 <= 6 && board[currentLine][currentRow + 1] == player){
             ++connectedTokens;
             ++currentRow;
             if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
@@ -110,7 +126,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentLine != 5 && currentRow != 6 && board[currentLine + 1][currentRow + 1] == player){
+        while (currentLine + 1 <= 5 && currentRow + 1 <= 6 && board[currentLine + 1][currentRow + 1] == player){
             ++connectedTokens;
             ++currentLine;
             ++currentRow;
@@ -120,7 +136,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentLine != 5 && board[currentLine + 1][currentRow] == player){
+        while (currentLine + 1 <= 5 && board[currentLine + 1][currentRow] == player){
             ++connectedTokens;
             ++currentLine;
             if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
@@ -129,7 +145,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while(currentLine != 5 && currentRow != 0 && board[currentLine + 1][currentRow - 1] == player){
+        while(currentLine + 1 <= 5 && currentRow - 1 >= 0 && board[currentLine + 1][currentRow - 1] == player){
             ++connectedTokens;
             ++currentLine;
             --currentRow;
@@ -139,7 +155,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while(currentRow != 0 && board[currentLine][currentRow - 1] == player){
+        while(currentRow - 1 >= 0 && board[currentLine][currentRow - 1] == player){
             ++connectedTokens;
             --currentRow;
             if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
@@ -149,6 +165,9 @@ class Model {
 
     // Read a board game and return a score depending on the number of connected tokens from each player
     evaluatePosisition(board){
+
+        if (this.checkTie(board)) return 0;
+
         let firstPlayerScore = 0;
         let secondPlayerScore = 0;
         let globalScore = 0;
@@ -192,8 +211,8 @@ class Model {
 
     // Check if a player has 4 connected tokens on the board
     checkWin(player, board){
-        for (let line = 0; line < 5; ++line){
-            for (let row = 0; row < 6; ++row){
+        for (let line = 0; line < 6; ++line){
+            for (let row = 0; row < 7; ++row){
                 if (board[line][row] == player){
                     if (this.exploreForConnects(line, row, board, player) == 4) return true;
                 }
@@ -262,54 +281,44 @@ class Model {
         }
     }
 
+    async playBotTurn(){
+        let evaluation;
+        let maxEval;
+        if (this.botTurn == 1) maxEval = -9999;
+        else maxEval = 9999;
+        let children = this.getChildrenOfPosition(this.matrix);
+
+        for (let child in children){
+
+        }
+    }
+
     // Allow a player to play his turn
-    playTurn(row, player){
+    async playTurn(row){
+        let player;
+        if (this.firstPlayerToPlay) player = 1;
+        else player = 2;
+
+        if (this.gameOver) return;
+
+        if (player == this.botTurn){
+            await this.playBotTurn();
+        }
+
         if (this.isRowFull(this.matrix, row)) return;
 
-        this.matrix[this.findFirstEmptySpot(this.matrix, row)][row] = player;
+        let line = this.findFirstEmptySpot(this.matrix, row)
+
+        this.setMatrixElement(line , row, player);
+
+        await this.addToken(line, row, player);
 
         this.gameOver = this.checkWin(player, this.matrix);
 
+        if (this.gameOver) console.log("Player " + player + " won !");
+
         this.firstPlayerToPlay = !this.firstPlayerToPlay;
     }
-
-    // Main function of the program. Breaks when the game is over
-    gameEngine(){
-        let input;
-
-        while (!this.gameOver){
-
-            let player;
-            if (this.firstPlayerToPlay) player = 1;
-            else player = 2;
-
-            if (this.botTurn != player){ // Turn of a player
-                input = -1;
-                this.showMatrix();
-                while (input < 0 || input > 6){
-                    console.log("Select a row from 0 to 6");
-                    input = prompt();
-                }
-                while (this.isRowFull(this.matrix, input)){
-                    console.log("Select a row from 0 to 6");
-                    input = prompt();
-                }
-                this.playTurn(input, player);
-            }
-
-
-            if (input == "kill") break;
-        }
-
-        console.log(this.gameOver);
-        this.showMatrix();
-    }
 }
-
-//const model = new Model();
-//model.clearMatrix();
-//model.createMatrix();
-//model.setBotTurn(0);
-//model.gameEngine();
 
 export {Model};

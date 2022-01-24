@@ -1,6 +1,5 @@
 class View {
   constructor(){
-    this.button = document.getElementByClassName('button_input_box');
     this.grid = document.getElementById('grid');
     this.gridCtx = this.grid.getContext('2d');
     this.tokens = document.getElementById('gridTokens');
@@ -8,6 +7,7 @@ class View {
     this.drawGrid();
     this.drawCircle();
     this.initEvents();
+    this.changeButtonColor();
   }
 
   changeButtonColor(){
@@ -17,14 +17,11 @@ class View {
       this.button.setAttribute('style','background-color: yellow;');
   }
 
-
-
   drawGrid(){
     this.gridCtx.clearRect(0, 0, 10000, 1000);
     this.gridCtx.rect(0, 0, 800, 700);
     this.gridCtx.fillStyle = 'blue';
     this.gridCtx.fill();
-    
 
     let x = 100;
     let y;
@@ -32,7 +29,6 @@ class View {
     for (let v = 0; v < 7; v++) {
       y=100;
       for (let h = 0; h < 6; h++) {
-        
         this.gridCtx.beginPath();
         this.gridCtx.arc(x, y, 40, 0, Math.PI*2, true);
         this.gridCtx.closePath();
@@ -60,7 +56,6 @@ class View {
         y += 100;
       }
       x += 100;
-      console.log(x,y);
     }
   }
 
@@ -84,6 +79,18 @@ class View {
     this.setMatrixElement = callback;
   }
 
+  bindPlayTurn(callback){
+    this.playTurn = callback;
+  }
+
+  bindResetGame(callback){
+    this.resetGame = callback;
+  }
+
+  bindSetBotTurn(callback){
+    this.setBotTurn = callback;
+  }
+
   bounceToken(y, row, color){
     this.tokensCtx.beginPath();
     this.tokensCtx.clearRect(0, 0, 10000, 10000);
@@ -100,7 +107,7 @@ class View {
 
   moveToken(y, row, color){
     this.tokensCtx.beginPath();
-    this.tokensCtx.clearRect(0, 0, 10000, 10000);
+    this.tokensCtx.clearRect((row + 1) * 100 - 40, 0, 80, y + 50);
     this.tokensCtx.closePath();
     this.tokensCtx.fillStyle = 'white';
     this.tokensCtx.fill();
@@ -112,7 +119,7 @@ class View {
     this.tokensCtx.fill();
   }
   
-  async addToken(row, line, player){
+  async addToken(line, row, player){
     let color;
     if (player == 1) color = 'red';
     else color = 'yellow';
@@ -128,53 +135,67 @@ class View {
       this.moveToken(y, row, color);
       y += 10;
     }
-
-
-    
   }
-  testViewClick(){
-    console.log("Click");
+
+  applyOptions(){
+    let activateAi = document.getElementById("activate_ai");
+    let selectPlayer = document.getElementById("select_player");
+
+    if (activateAi.checked){
+      this.setBotTurn(selectPlayer.options[selectPlayer.selectedIndex].value);
+    }
   }
 
   initEvents(){
     let b0 = document.getElementById("b0");
     b0.addEventListener('click', () => {
-      if (!this.isRowFull(this.getMatrix(), 0)){
-        let line = this.findFirstEmptySpot(this.getMatrix(), 0);
-        let player;
-        if (this.getFirstPlayerToPlay) player = 1;
-        else player = 2;
-        this.addToken(0, line, player);
-        this.setMatrixElement(0, line, player);
-      }
-      
-
+      this.playTurn(0);
     });
+
     let b1 = document.getElementById("b1");
     b1.addEventListener('click', () => {
-      this.testViewClick();
+      this.playTurn(1);
     });
+
     let b2 = document.getElementById("b2");
     b2.addEventListener('click', () => {
-      this.testViewClick();
+      this.playTurn(2);
     });
+
     let b3 = document.getElementById("b3");
     b3.addEventListener('click', () => {
-      this.testViewClick();
+      this.playTurn(3);
     });
+
     let b4 = document.getElementById("b4");
     b4.addEventListener('click', () => {
-      this.testViewClick();
+      this.playTurn(4);
     });
+    
     let b5 = document.getElementById("b5");
     b5.addEventListener('click', () => {
-      this.testViewClick();
+      this.playTurn(5);
     });
+
     let b6 = document.getElementById("b6");
     b6.addEventListener('click', () => {
-      this.testViewClick();
+      this.playTurn(6);
     });
+
+    let reset = document.getElementById("reset_button");
+    reset.addEventListener('click', () => {
+      this.resetGame();
+      this.tokensCtx.beginPath();
+      this.tokensCtx.clearRect(0 , 0, 10000, 10000);
+      this.tokensCtx.closePath();
+    })
+
+    let applyTheOptions = document.getElementById("apply_options");
+    applyTheOptions.addEventListener('click', () => {
+      this.applyOptions();
+    })
 }
+
 }
 
 
@@ -185,12 +206,5 @@ function sleep(time){
     }, time)
   })
 }
-
-
-//view.drawGrid();
-//view.drawCircle();
-//view.initEvents();
-//view.addToken(0, 5, 1);
-
 
 export {View};
