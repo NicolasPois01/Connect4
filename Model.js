@@ -5,6 +5,7 @@ class Model {
         this.gameOver = false;
         this.botTurn = 2;
         this.botDepth = 5;
+        this.botPlay
 
         this.createMatrix();
         this.setBotTurn(0);
@@ -12,6 +13,10 @@ class Model {
 
     bindAddToken(callback){
         this.addToken = callback;
+    }
+
+    bindApplyOptions(callback){
+        this.applyOptions = callback;
     }
 
     //Create the empty board game
@@ -28,11 +33,13 @@ class Model {
 
     setBotTurn(turn){
         this.botTurn = turn;
+        console.log(this.botTurn);
     }
 
     //Empty the board
     clearMatrix(){ 
         this.matrix = [];
+        this.createMatrix();
     }
 
     getMatrix(){
@@ -50,6 +57,13 @@ class Model {
     // Display the actual state of the game
     showMatrix(){
         console.log(this.matrix);
+    }
+
+    resetGame(){
+        this.clearMatrix();
+        this.gameOver = false;
+        this.firstPlayerToPlay = true;
+        this.applyOptions();
     }
 
     // Check if the row is full
@@ -150,6 +164,9 @@ class Model {
 
     // Read a board game and return a score depending on the number of connected tokens from each player
     evaluatePosisition(board){
+
+        if (this.checkTie(board)) return 0;
+
         let firstPlayerScore = 0;
         let secondPlayerScore = 0;
         let globalScore = 0;
@@ -263,13 +280,29 @@ class Model {
         }
     }
 
+    async playBotTurn(){
+        let evaluation;
+        let maxEval;
+        if (this.botTurn == 1) maxEval = -9999;
+        else maxEval = 9999;
+        let children = this.getChildrenOfPosition(this.matrix);
+
+        for (let child in children){
+
+        }
+    }
+
     // Allow a player to play his turn
     async playTurn(row){
         let player;
         if (this.firstPlayerToPlay) player = 1;
         else player = 2;
 
-        if (player == this.botTurn || this.gameOver) return;
+        if (this.gameOver) return;
+
+        if (player == this.botTurn){
+            await this.playBotTurn();
+        }
 
         if (this.isRowFull(this.matrix, row)) return;
 
@@ -284,38 +317,6 @@ class Model {
         if (this.gameOver) console.log("Player " + player + " won !");
 
         this.firstPlayerToPlay = !this.firstPlayerToPlay;
-    }
-
-    // Main function of the program. Breaks when the game is over
-    gameEngine(){
-        let input;
-
-        while (!this.gameOver){
-
-            let player;
-            if (this.firstPlayerToPlay) player = 1;
-            else player = 2;
-
-            if (this.botTurn != player){ // Turn of a player
-                input = -1;
-                this.showMatrix();
-                while (input < 0 || input > 6){
-                    console.log("Select a row from 0 to 6");
-                    input = prompt();
-                }
-                while (this.isRowFull(this.matrix, input)){
-                    console.log("Select a row from 0 to 6");
-                    input = prompt();
-                }
-                this.playTurn(input, player);
-            }
-
-
-            if (input == "kill") break;
-        }
-
-        console.log(this.gameOver);
-        this.showMatrix();
     }
 }
 

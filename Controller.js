@@ -25,6 +25,15 @@ class Controller {
 
         this.bindAddToken = this.bindAddToken.bind(this);
         this.model.bindAddToken(this.bindAddToken);
+
+        this.bindResetGame = this.bindResetGame.bind(this);
+        this.view.bindResetGame(this.bindResetGame);
+
+        this.bindSetBotTurn = this.bindSetBotTurn.bind(this);
+        this.view.bindSetBotTurn(this.bindSetBotTurn);
+
+        this.bindApplyOptions = this.bindApplyOptions.bind(this);
+        this.model.bindApplyOptions(this.bindApplyOptions);
     }
 
     bindFindFirstEmptySpot(board, row){
@@ -55,8 +64,16 @@ class Controller {
         this.view.addToken(row, line, player);
     }
 
-    getBoard(){
-        return this.board;
+    bindResetGame(){
+        this.model.resetGame();
+    }
+
+    bindSetBotTurn(turn){
+        this.model.setBotTurn(turn);
+    }
+
+    bindApplyOptions(){
+        this.view.applyOptions();
     }
 }
 

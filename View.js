@@ -75,6 +75,14 @@ class View {
     this.playTurn = callback;
   }
 
+  bindResetGame(callback){
+    this.resetGame = callback;
+  }
+
+  bindSetBotTurn(callback){
+    this.setBotTurn = callback;
+  }
+
   bounceToken(y, row, color){
     this.tokensCtx.beginPath();
     this.tokensCtx.clearRect(0, 0, 10000, 10000);
@@ -121,6 +129,15 @@ class View {
     }
   }
 
+  applyOptions(){
+    let activateAi = document.getElementById("activate_ai");
+    let selectPlayer = document.getElementById("select_player");
+
+    if (activateAi.checked){
+      this.setBotTurn(selectPlayer.options[selectPlayer.selectedIndex].value);
+    }
+  }
+
   initEvents(){
     let b0 = document.getElementById("b0");
     b0.addEventListener('click', () => {
@@ -156,7 +173,21 @@ class View {
     b6.addEventListener('click', () => {
       this.playTurn(6);
     });
+
+    let reset = document.getElementById("reset_button");
+    reset.addEventListener('click', () => {
+      this.resetGame();
+      this.tokensCtx.beginPath();
+      this.tokensCtx.clearRect(0 , 0, 10000, 10000);
+      this.tokensCtx.closePath();
+    })
+
+    let applyTheOptions = document.getElementById("apply_options");
+    applyTheOptions.addEventListener('click', () => {
+      this.applyOptions();
+    })
 }
+
 }
 
 

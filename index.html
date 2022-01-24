@@ -4,8 +4,27 @@
 	<link rel="stylesheet" href="index.css">
 </head>
 <body>
-	
-    <h1>Test</h1>
+
+	<button id="reset_button">Reset game</button>
+
+	<div id="menu_container">
+		<ul>
+			<li>
+				<label>Artificial Intelligence</label>
+				<input type="checkbox" id="activate_ai">Activate AI
+			</li>
+			
+			<li>
+				<label>AI plays as</label>
+				<select name="player" id="select_player">
+					<option value="1">Player 1</option>
+					<option value="2">Player 2</option>
+				</select>
+			</li>
+		</ul>
+	</div>
+
+	<button id="apply_options">Apply the options</button>
     
 	<div class="div_flex_container">
 		<button class="button_input_box" id="b0"></button>

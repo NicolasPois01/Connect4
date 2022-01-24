@@ -28,3 +28,12 @@
   flex-direction: row;
   margin-left: 3.5rem;
 }
+
+#reset_button{
+  display: flex;
+  z-index: 1;
+  margin-left: 40%;
+  width: 15%;
+  height: 10%;
+  justify-content: center;
+}
