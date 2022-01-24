@@ -112,6 +112,7 @@ class View {
   }
   
   async addToken(line, row, player){
+    console.log("addToken parameters :" + line + row + player);
     let color;
     if (player == 1) color = 'red';
     else color = 'yellow';
@@ -134,7 +135,7 @@ class View {
     let selectPlayer = document.getElementById("select_player");
 
     if (activateAi.checked){
-      this.setBotTurn(selectPlayer.options[selectPlayer.selectedIndex].value);
+      this.setBotTurn(parseInt(selectPlayer.options[selectPlayer.selectedIndex].value));
     }
   }
 
