@@ -4,19 +4,17 @@ class View {
     this.gridCtx = this.grid.getContext('2d');
     this.tokens = document.getElementById('gridTokens');
     this.tokensCtx = this.tokens.getContext('2d');
+    
     this.drawGrid();
     this.drawCircle();
     this.initEvents();
-    this.changeButtonColor();
+    
   }
 
-  changeButtonColor(){
-    if (player == 1) 
-      this.button.setAttribute('style','background-color: red;');
-    else 
-      this.button.setAttribute('style','background-color: yellow;');
-  }
 
+ 
+
+  
   drawGrid(){
     this.gridCtx.clearRect(0, 0, 10000, 1000);
     this.gridCtx.rect(0, 0, 800, 700);
@@ -120,6 +118,7 @@ class View {
   }
   
   async addToken(line, row, player){
+    console.log("addToken parameters :" + line + row + player);
     let color;
     if (player == 1) color = 'red';
     else color = 'yellow';
@@ -142,7 +141,7 @@ class View {
     let selectPlayer = document.getElementById("select_player");
 
     if (activateAi.checked){
-      this.setBotTurn(selectPlayer.options[selectPlayer.selectedIndex].value);
+      this.setBotTurn(parseInt(selectPlayer.options[selectPlayer.selectedIndex].value));
     }
   }
 
@@ -180,6 +179,7 @@ class View {
     let b6 = document.getElementById("b6");
     b6.addEventListener('click', () => {
       this.playTurn(6);
+      this.changeButtonColor();
     });
 
     let reset = document.getElementById("reset_button");

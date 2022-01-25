@@ -5,26 +5,24 @@
 </head>
 <body>
 
-	
-
 	<div class="menu">
    		<h1 id="textMenu">MENU</h1>
 		<div>
 			<input type="checkbox" id="ia" name="ia" onClick="TestCase">
-			<label for="ia">Activate IA</label>
-
+			<label  for="ia">Activate IA</label>
 		</div>
 
 		<div>
-			<label>AI plays as</label>
+			<label id="ia">AI plays as</label>
 				<select name="player" id="select_player">
 					<option value="1">Player 1</option>
 					<option value="2">Player 2</option>
 				</select>
 		</div>
-		<button id="start">Start</button>
-		<button id="reset_button">Reset game</button>
+		<button class="apply_options" id="apply_button">apply options</button>
+		<button class="menuButton" id="reset_button">Reset game</button>
 	</div>
+
     
 	<div class="div_flex_container">
 		<button class="button_input_box" id="b0"></button>

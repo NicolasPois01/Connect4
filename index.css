@@ -2,6 +2,7 @@
   position: absolute;
   z-index: 0;
   background: transparent;
+  border-radius:30px;
 }
 
 #gridTokens{
@@ -14,44 +15,67 @@
   text-align: center;
 }
 
-#start{
-  margin : 1rem;
-  width: 5rem;
-  height: 2.5rem;
-  margin-left : 5rem;
-}
+  .button_input_box{
+    margin: 0.9rem;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius:50px;   
+    opacity: 0.5;
+    background-color: black;
+  }
+  .button_input_box:hover{
+    opacity: 1;
+  }
 
-.button_input_box{
-  margin: 0.9rem;
-  width: 4.5rem;
-  height: 4.5rem;
-  border-radius:50px;   
-  opacity: 0.4;
-}
-.button_input_box:hover{
-  opacity: 1;
-}
+
 .div_flex_container{
   display: flex;
   flex-direction: row;
   margin-left: 3.5rem;
 }
 
-#reset_button{
-  margin-right : 5rem;
-}
-
 #ia{
   margin: 1rem;
 }
+input{
+  margin: 1rem;  
+}
+
+#reset_button{
+  display: flex;
+  z-index: 1;
+  margin-left: 40%;
+  width: 15%;
+  height: 10%;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+#apply_button{
+  display: flex;
+  z-index: 1;
+  margin-left: 40%;
+  width: 15%;
+  height: 10%;
+  margin-top: 1rem;
+  justify-content: center;
+}
 .menu{
-  position: absolute;
-  background-color: orange;
-  margin-left: 55rem;
-  padding:  1rem;
-  border-radius:50px; 
+  margin-left: 12rem;
+  margin-right: 55rem;
+  padding:  0.4rem;
+  border-radius:30px;
+  background-image: url("index.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+
 }
 
 #textMenu{
   text-align: center;
+  color: white;
+  
 }
+
+
+

@@ -5,12 +5,9 @@ class Model {
         this.gameOver = false;
         this.botTurn = 2;
         this.botDepth = 5;
-        this.botPlay
-
         this.createMatrix();
         this.setBotTurn(0);
     }
-
 
     bindAddToken(callback){
         this.addToken = callback;
@@ -48,7 +45,13 @@ class Model {
     }
 
     setMatrixElement(line, row, value){
+        console.log(line, row, value);
         this.matrix[line][row] = value;
+    }
+
+    removeMatrixElement(line, row){
+        console.log(line, row);
+        this.matrix[line][row] = 0;
     }
 
     getFirstPlayerToPlay(){
@@ -68,27 +71,27 @@ class Model {
     }
 
     // Check if the row is full
-    isRowFull(board, row){ 
+    isRowFull(row){ 
         for (let line = 0; line < 6; ++line){
-            if (board[line][row] == 0) return false;
+            if (this.matrix[line][row] == 0) return false;
         }
         return true;
     }
 
     // Find and return the position of the first line available in the row (starting from the bottom)
-    findFirstEmptySpot(board, row){ 
+    findFirstEmptySpot(row){ 
         for (let line = 5; line >= 0; --line){
-            if (board[line][row] == 0) return line;
+            if (this.matrix[line][row] == 0) return line;
         }
     }
 
     // Explore the 8 directions from a specific token and return the number of connected tokens
-    exploreForConnects(line, row, board, player){
+    exploreForConnects(line, row,  player){
         let connectedTokens = 1;
         let currentLine = line;
         let currentRow = row;
         let maxConnectedTokens = 1;
-        while (currentLine - 1 >= 0 && currentRow - 1 >= 0 && board[currentLine - 1][currentRow - 1] == player){
+        while (currentLine - 1 >= 0 && currentRow - 1 >= 0 && this.matrix[currentLine - 1][currentRow - 1] == player){
             ++connectedTokens;
             --currentLine;
             --currentRow;
@@ -98,7 +101,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentLine - 1 >= 0 && board[currentLine - 1][currentRow] == player){
+        while (currentLine - 1 >= 0 && this.matrix[currentLine - 1][currentRow] == player){
             ++connectedTokens;
             --currentLine;
             if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
@@ -107,7 +110,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentLine - 1 >= 0 && currentRow + 1 <= 6 && board[currentLine - 1][currentRow + 1] == player){
+        while (currentLine - 1 >= 0 && currentRow + 1 <= 6 && this.matrix[currentLine - 1][currentRow + 1] == player){
             ++connectedTokens;
             --currentLine;
             ++currentRow;
@@ -117,7 +120,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentRow + 1 <= 6 && board[currentLine][currentRow + 1] == player){
+        while (currentRow + 1 <= 6 && this.matrix[currentLine][currentRow + 1] == player){
             ++connectedTokens;
             ++currentRow;
             if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
@@ -126,7 +129,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentLine + 1 <= 5 && currentRow + 1 <= 6 && board[currentLine + 1][currentRow + 1] == player){
+        while (currentLine + 1 <= 5 && currentRow + 1 <= 6 && this.matrix[currentLine + 1][currentRow + 1] == player){
             ++connectedTokens;
             ++currentLine;
             ++currentRow;
@@ -136,7 +139,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while (currentLine + 1 <= 5 && board[currentLine + 1][currentRow] == player){
+        while (currentLine + 1 <= 5 && this.matrix[currentLine + 1][currentRow] == player){
             ++connectedTokens;
             ++currentLine;
             if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
@@ -145,7 +148,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while(currentLine + 1 <= 5 && currentRow - 1 >= 0 && board[currentLine + 1][currentRow - 1] == player){
+        while(currentLine + 1 <= 5 && currentRow - 1 >= 0 && this.matrix[currentLine + 1][currentRow - 1] == player){
             ++connectedTokens;
             ++currentLine;
             --currentRow;
@@ -155,7 +158,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
-        while(currentRow - 1 >= 0 && board[currentLine][currentRow - 1] == player){
+        while(currentRow - 1 >= 0 && this.matrix[currentLine][currentRow - 1] == player){
             ++connectedTokens;
             --currentRow;
             if (connectedTokens > maxConnectedTokens) maxConnectedTokens = connectedTokens;
@@ -164,9 +167,9 @@ class Model {
     }
 
     // Read a board game and return a score depending on the number of connected tokens from each player
-    evaluatePosisition(board){
+    evaluatePosisition(){
 
-        if (this.checkTie(board)) return 0;
+        if (this.checkTie()) return 0;
 
         let firstPlayerScore = 0;
         let secondPlayerScore = 0;
@@ -175,7 +178,7 @@ class Model {
 
         for (let line = 0; line < 5; ++line){
             for ( let row = 0; row < 6; ++row){
-                numberOfConnections = this.exploreForConnects(line, row, board, 1);
+                numberOfConnections = this.exploreForConnects(line, row, 1);
                 switch (numberOfConnections){
                     case 2:
                         firstPlayerScore += 10;
@@ -189,7 +192,7 @@ class Model {
                         firstPlayerScore += 999;
                 }
 
-                numberOfConnections = this.exploreForConnects(line, row, board, 2);
+                numberOfConnections = this.exploreForConnects(line, row,  2);
                 switch (numberOfConnections){
                     case 2:
                         secondPlayerScore += 10;
@@ -210,11 +213,11 @@ class Model {
     }
 
     // Check if a player has 4 connected tokens on the board
-    checkWin(player, board){
+    checkWin(player){
         for (let line = 0; line < 6; ++line){
             for (let row = 0; row < 7; ++row){
-                if (board[line][row] == player){
-                    if (this.exploreForConnects(line, row, board, player) == 4) return true;
+                if (this.matrix[line][row] == player){
+                    if (this.exploreForConnects(line, row, player) == 4) return true;
                 }
             }
         }
@@ -222,44 +225,47 @@ class Model {
     }
 
     // Check if there is a legal move to play
-    checkTie(board){
+    checkTie(){
         for (let row = 0; row < 7; ++row){
-            if (!this.isRowFull(board, row)) return false;
+            if (!this.isRowFull(row)) return false;
         }
         return true;
     }
 
-    // Generate and return a 3D array containing every possible next position from a board
-    getChildrenOfPosition(board, player){
-        children = new Array(new Array(new Array()));
-        for (let row = 0; row < 7; ++row){
-            if (!this.isRowFull(board, row)){
-                children[row] = board; 
-                children[row][this.findFirstEmptySpot(board, row)][row] = player;
+    getAvailableRow(){
+        let rows = [];
+        for (let i = 0; i < 7; ++i){
+            if (this.matrix[0][i] == 0){
+                rows.push(i);
             }
         }
-        return children; 
+        return rows;
     }
 
     // Main recursive function of the bot that finds the best way to play
-    miniMax (board, depth, alpha, beta, maximizingPlayerOne){
-        if (depth == 0 || this.checkWin(1, board) || this.checkWin(2, board)){
-            return this.evaluatePosisition(board);
+    miniMax (depth, alpha, beta, maximizingPlayerOne){
+        console.log("Enter miniMax");
+        if (depth == 0 || this.checkWin(1) || this.checkWin(2)){
+            return this.evaluatePosisition();
         }
 
         let maxEval;
         let minEval;
         let evaluation;
+        let rows;
         let player;
-        let children;
+        let line;
 
         if (maximizingPlayerOne){
-            maxEval = -9999;
+            maxEval = -Infinity;
             player = 1;
 
-            children = this.getChildrenOfPosition(board, player);
-            for (let child in children){
-                evaluation = this.miniMax(child, depth - 1, alpha, beta, false);
+            rows = this.getAvailableRow();
+            for (let row of rows){
+                line = this.findFirstEmptySpot(row);
+                this.setMatrixElement(line, row, player);
+                evaluation = this.miniMax(depth - 1, alpha, beta, false);
+                this.removeMatrixElement(line, row);
                 if (evaluation > maxEval) maxEval = evaluation;
                 if (evaluation > alpha) alpha = evaluation;
                 if (beta <= alpha) break;
@@ -267,12 +273,15 @@ class Model {
             return maxEval;
         }
         else {
-            minEval = 9999;
+            minEval = Infinity;
             player = 2;
 
-            children = this.getChildrenOfPosition(board, player);
-            for (let child in children){
-                evaluation = this.miniMax(child, depth - 1, alpha, beta, true);
+            rows = this.getAvailableRow();
+            for (let row of rows){
+                line = this.findFirstEmptySpot(row);
+                this.setMatrixElement(line, row, player);
+                evaluation = this.miniMax(depth - 1, alpha, beta, true);
+                this.removeMatrixElement(line, row);
                 if (evaluation < minEval) minEval = evaluation;
                 if (evaluation < beta) beta = evaluation;
                 if (beta <= alpha) break;
@@ -282,20 +291,94 @@ class Model {
     }
 
     async playBotTurn(){
+        console.log("Enter playBotTurn");
+        let rows = this.getAvailableRow();
         let evaluation;
         let maxEval;
-        if (this.botTurn == 1) maxEval = -9999;
-        else maxEval = 9999;
-        let children = this.getChildrenOfPosition(this.matrix);
+        let botPlay = -1;
+        let alpha = -Infinity;
+        let beta = Infinity;
+        let line;
 
-        for (let child in children){
-
+        if (this.botTurn == 1){
+            maxEval = -Infinity;
+            for (let row of rows){
+                line = this.findFirstEmptySpot(row);
+                this.setMatrixElement(line, row, this.botTurn);
+                evaluation = this.miniMax(this.botDepth - 1, alpha, beta, false)
+                this.removeMatrixElement(line, row);
+                if (evaluation > maxEval){
+                    maxEval = evaluation;
+                    botPlay = row;
+                }
+                if (evaluation > alpha) alpha = evaluation;
+                if (beta <= alpha) break;
+            }
         }
+        else{
+            maxEval = Infinity;
+            for (let row of rows){
+                line = this.findFirstEmptySpot(row);
+                this.setMatrixElement(line, row, this.botTurn);
+                evaluation = this.miniMax(this.botDepth - 1, alpha, beta, true)
+                this.removeMatrixElement(line, row);
+                if (evaluation < maxEval){
+                    maxEval = evaluation;
+                    botPlay = row;
+                }
+                if (evaluation < beta) beta = evaluation;
+                if (beta <= alpha) break;
+            }
+        }
+
+        let finalLine = this.findFirstEmptySpot(botPlay);
+        this.setMatrixElement(finalLine, botPlay, this.botTurn);
+        await this.addToken(finalLine, botPlay, this.botTurn);
+        console.log(this.matrix);
+        this.gameOver = this.checkWin(this.botTurn);
+        if (this.gameOver) console.log("Player " + this.botTurn + " won !");
     }
+
+
+
+    changeButtonColor(player){
+        this.b0 = document.getElementById('b0');
+        this.b1 = document.getElementById('b1');
+        this.b2 = document.getElementById('b2');
+        this.b3 = document.getElementById('b3');
+        this.b4 = document.getElementById('b4');
+        this.b5 = document.getElementById('b5');
+        this.b6 = document.getElementById('b6');
+        //this.button = document.getElementsByClassName('button_input_box');
+        if (player == 2)
+        {
+            b0.style.backgroundColor='red';
+            b1.style.backgroundColor='red';
+            b2.style.backgroundColor='red';
+            b3.style.backgroundColor='red';
+            b4.style.backgroundColor='red';
+            b5.style.backgroundColor='red';
+            b6.style.backgroundColor='red';
+        }   
+        else
+        {
+            b0.style.backgroundColor='yellow';
+            b1.style.backgroundColor='yellow';
+            b2.style.backgroundColor='yellow';
+            b3.style.backgroundColor='yellow';
+            b4.style.backgroundColor='yellow';
+            b5.style.backgroundColor='yellow';
+            b6.style.backgroundColor='yellow';      
+        }
+  }
+
 
     // Allow a player to play his turn
     async playTurn(row){
+        console.log("Enter playTurn");
         let player;
+
+
         if (this.firstPlayerToPlay) player = 1;
         else player = 2;
 
@@ -303,17 +386,21 @@ class Model {
 
         if (player == this.botTurn){
             await this.playBotTurn();
+            this.firstPlayerToPlay = !this.firstPlayerToPlay;
+            return;
         }
 
-        if (this.isRowFull(this.matrix, row)) return;
+        this.changeButtonColor(player);
 
-        let line = this.findFirstEmptySpot(this.matrix, row)
+        if (this.isRowFull(row)) return;
+
+        let line = this.findFirstEmptySpot(row)
 
         this.setMatrixElement(line , row, player);
 
         await this.addToken(line, row, player);
 
-        this.gameOver = this.checkWin(player, this.matrix);
+        this.gameOver = this.checkWin(player);
 
         if (this.gameOver) console.log("Player " + player + " won !");
 
