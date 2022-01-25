@@ -8,8 +8,10 @@ class Model {
 
         this.createMatrix();
         this.setBotTurn(0);
+        //this.testEvaluatePosition();
     }
 
+    // Bindings
     bindAddToken(callback){
         this.addToken = callback;
     }
@@ -32,10 +34,8 @@ class Model {
 
     setBotTurn(turn){
         this.botTurn = turn;
-        console.log(this.botTurn);
     }
 
-    //Empty the board
     clearMatrix(){ 
         this.matrix = [];
         this.createMatrix();
@@ -46,12 +46,10 @@ class Model {
     }
 
     setMatrixElement(line, row, value){
-        console.log(line, row, value);
         this.matrix[line][row] = value;
     }
 
     removeMatrixElement(line, row){
-        console.log(line, row);
         this.matrix[line][row] = 0;
     }
 
@@ -59,11 +57,12 @@ class Model {
         return this.firstPlayerToPlay;
     }
 
-    // Display the actual state of the game
+    // This function is used for tests
     showMatrix(){
         console.log(this.matrix);
     }
 
+    // Clear the matrix and reset the game options
     resetGame(){
         this.clearMatrix();
         this.gameOver = false;
@@ -73,13 +72,11 @@ class Model {
 
     // Check if the row is full
     isRowFull(row){ 
-        for (let line = 0; line < 6; ++line){
-            if (this.matrix[line][row] == 0) return false;
-        }
-        return true;
+        if (this.matrix[0][row] == 0) return false;
+        else return true;
     }
 
-    // Find and return the position of the first line available in the row (starting from the bottom)
+    // Find and return the index of the first line available in the row (starting from the bottom)
     findFirstEmptySpot(row){ 
         for (let line = 5; line >= 0; --line){
             if (this.matrix[line][row] == 0) return line;
@@ -88,10 +85,14 @@ class Model {
 
     // Explore the 8 directions from a specific token and return the number of connected tokens
     exploreForConnects(line, row,  player){
+        if (this.matrix[line][row] != player) return 0; //If the current token ain't a player we don't need to test the directions
         let connectedTokens = 1;
         let currentLine = line;
         let currentRow = row;
         let maxConnectedTokens = 1;
+        // The 8 directions are organized in clockwise starting from the top left
+
+        // Top left
         while (currentLine - 1 >= 0 && currentRow - 1 >= 0 && this.matrix[currentLine - 1][currentRow - 1] == player){
             ++connectedTokens;
             --currentLine;
@@ -102,6 +103,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
+        // Top
         while (currentLine - 1 >= 0 && this.matrix[currentLine - 1][currentRow] == player){
             ++connectedTokens;
             --currentLine;
@@ -111,6 +113,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
+        // Top right
         while (currentLine - 1 >= 0 && currentRow + 1 <= 6 && this.matrix[currentLine - 1][currentRow + 1] == player){
             ++connectedTokens;
             --currentLine;
@@ -121,6 +124,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
+        // Right
         while (currentRow + 1 <= 6 && this.matrix[currentLine][currentRow + 1] == player){
             ++connectedTokens;
             ++currentRow;
@@ -130,6 +134,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
+        // Bottom right
         while (currentLine + 1 <= 5 && currentRow + 1 <= 6 && this.matrix[currentLine + 1][currentRow + 1] == player){
             ++connectedTokens;
             ++currentLine;
@@ -140,6 +145,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
+        // Bottom
         while (currentLine + 1 <= 5 && this.matrix[currentLine + 1][currentRow] == player){
             ++connectedTokens;
             ++currentLine;
@@ -149,6 +155,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
+        // Bottom left
         while(currentLine + 1 <= 5 && currentRow - 1 >= 0 && this.matrix[currentLine + 1][currentRow - 1] == player){
             ++connectedTokens;
             ++currentLine;
@@ -159,6 +166,7 @@ class Model {
         connectedTokens = 1;
         currentLine = line;
         currentRow = row;
+        // Left
         while(currentRow - 1 >= 0 && this.matrix[currentLine][currentRow - 1] == player){
             ++connectedTokens;
             --currentRow;
@@ -190,7 +198,7 @@ class Model {
                         break;
 
                     case 4:
-                        firstPlayerScore += 999;
+                        firstPlayerScore += 9999;
                 }
 
                 numberOfConnections = this.exploreForConnects(line, row,  2);
@@ -204,7 +212,7 @@ class Model {
                         break;
 
                     case 4:
-                        secondPlayerScore += 999;
+                        secondPlayerScore += 9999;
                         break;
                 }
             }
@@ -218,6 +226,7 @@ class Model {
         for (let line = 0; line < 6; ++line){
             for (let row = 0; row < 7; ++row){
                 if (this.matrix[line][row] == player){
+                    // A player wins if he has 4 connected tokens
                     if (this.exploreForConnects(line, row, player) == 4) return true;
                 }
             }
@@ -225,7 +234,7 @@ class Model {
         return false;
     }
 
-    // Check if there is a legal move to play
+    // Check if the board is full
     checkTie(){
         for (let row = 0; row < 7; ++row){
             if (!this.isRowFull(row)) return false;
@@ -233,6 +242,7 @@ class Model {
         return true;
     }
 
+    // Return a 1D matrix containing the current available rows
     getAvailableRow(){
         let rows = [];
         for (let i = 0; i < 7; ++i){
@@ -245,7 +255,6 @@ class Model {
 
     // Main recursive function of the bot that finds the best way to play
     miniMax (depth, alpha, beta, maximizingPlayerOne){
-        console.log("Enter miniMax");
         if (depth == 0 || this.checkWin(1) || this.checkWin(2)){
             return this.evaluatePosisition();
         }
@@ -291,8 +300,12 @@ class Model {
         }
     }
 
+    // Function that setups a bot's turn
     async playBotTurn(){
-        console.log("Enter playBotTurn");
+        let player;
+        if (this.firstPlayerToPlay) player = 1;
+        else player = 2;
+        if (player != this.botTurn) return;
         let rows = this.getAvailableRow();
         let evaluation;
         let maxEval;
@@ -335,14 +348,13 @@ class Model {
         let finalLine = this.findFirstEmptySpot(botPlay);
         this.setMatrixElement(finalLine, botPlay, this.botTurn);
         await this.addToken(finalLine, botPlay, this.botTurn);
-        console.log(this.matrix);
         this.gameOver = this.checkWin(this.botTurn);
         if (this.gameOver) console.log("Player " + this.botTurn + " won !");
+        this.firstPlayerToPlay = !this.firstPlayerToPlay;
     }
 
-    // Allow a player to play his turn
+    // Function that setups a player's turn
     async playTurn(row){
-        console.log("Enter playTurn");
         let player;
         if (this.firstPlayerToPlay) player = 1;
         else player = 2;
@@ -351,7 +363,6 @@ class Model {
 
         if (player == this.botTurn){
             await this.playBotTurn();
-            this.firstPlayerToPlay = !this.firstPlayerToPlay;
             return;
         }
 
@@ -361,6 +372,8 @@ class Model {
 
         this.setMatrixElement(line , row, player);
 
+        console.log("Eval : " + this.evaluatePosisition());
+
         await this.addToken(line, row, player);
 
         this.gameOver = this.checkWin(player);
@@ -368,6 +381,20 @@ class Model {
         if (this.gameOver) console.log("Player " + player + " won !");
 
         this.firstPlayerToPlay = !this.firstPlayerToPlay;
+    }
+
+    // Function of test
+    testEvaluatePosition(){
+        this.matrix = [
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,2,0,1,0,0,0],
+            [0,2,1,2,0,2,0],
+            [0,1,2,1,1,2,1],
+            [2,1,1,2,1,1,2]
+        ];
+        console.log(this.evaluatePosisition());
+        this.showMatrix();
     }
 }
 

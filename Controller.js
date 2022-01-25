@@ -34,6 +34,9 @@ class Controller {
 
         this.bindApplyOptions = this.bindApplyOptions.bind(this);
         this.model.bindApplyOptions(this.bindApplyOptions);
+
+        this.bindPlayBotTurn = this.bindPlayBotTurn.bind(this);
+        this.view.bindPlayBotTurn(this.bindPlayBotTurn);
     }
 
     bindFindFirstEmptySpot(board, row){
@@ -74,6 +77,10 @@ class Controller {
 
     bindApplyOptions(){
         this.view.applyOptions();
+    }
+
+    bindPlayBotTurn(){
+        this.model.playBotTurn();
     }
 }
 
