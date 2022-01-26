@@ -4,7 +4,7 @@ class Model {
         this.firstPlayerToPlay = true;
         this.gameOver = false;
         this.botTurn = 2;
-        this.botDepth = 5;
+        this.botDepth = 10;
 
         this.createMatrix();
         this.setBotTurn(0);
@@ -185,8 +185,8 @@ class Model {
         let globalScore = 0;
         let numberOfConnections = 1;
 
-        for (let line = 0; line < 5; ++line){
-            for ( let row = 0; row < 6; ++row){
+        for (let line = 0; line < 6; ++line){
+            for ( let row = 0; row < 7; ++row){
                 numberOfConnections = this.exploreForConnects(line, row, 1);
                 switch (numberOfConnections){
                     case 2:
