@@ -155,15 +155,11 @@ class View {
 
   // Apply the options selected in the menu
   applyOptions(){
-    let IA = document.getElementById("ia");
-    let firstPlayer = document.getElementById("select_player").value;
+    let activateAi = document.getElementById("activate_ai");
+    let selectPlayer = document.getElementById("select_player");
 
-    if(IA.checked)
-    {
-      if (firstPlayer==1)
-        console.log("IA doit commencer");
-      else
-        console.log("L'humain doit commencer");
+    if (activateAi.checked){
+      this.setBotTurn(parseInt(selectPlayer.options[selectPlayer.selectedIndex].value));
     }
   }
 
