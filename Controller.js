@@ -75,6 +75,9 @@ class Controller {
     bindApplyOptions(){
         this.view.applyOptions();
     }
+    bindChangeButtonColor(player){
+        this.model.changeButtonColor(player);
+    }
 }
 
 const app = new Controller(new Model(), new View());

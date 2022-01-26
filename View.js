@@ -136,14 +136,18 @@ class View {
     }
   }
 
-  applyOptions(){
-    let activateAi = document.getElementById("activate_ai");
-    let selectPlayer = document.getElementById("select_player");
+    applyOptions(){
+    let IA = document.getElementById("ia");
+    let firstPlayer = document.getElementById("select_player").value;
 
-    if (activateAi.checked){
-      this.setBotTurn(parseInt(selectPlayer.options[selectPlayer.selectedIndex].value));
+    if(IA.checked)
+    {
+      if (firstPlayer=1)
+        console.log("IA doit commencer");
+      else
+        console.log("L'humain doit commencer");
     }
-  }
+  
 
   initEvents(){
     let b0 = document.getElementById("b0");
@@ -179,7 +183,6 @@ class View {
     let b6 = document.getElementById("b6");
     b6.addEventListener('click', () => {
       this.playTurn(6);
-      this.changeButtonColor();
     });
 
     let reset = document.getElementById("reset_button");

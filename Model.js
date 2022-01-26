@@ -370,7 +370,7 @@ class Model {
             b5.style.backgroundColor='yellow';
             b6.style.backgroundColor='yellow';      
         }
-  }
+    }
 
 
     // Allow a player to play his turn
