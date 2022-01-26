@@ -4,17 +4,12 @@ class View {
     this.gridCtx = this.grid.getContext('2d');
     this.tokens = document.getElementById('gridTokens');
     this.tokensCtx = this.tokens.getContext('2d');
-    
     this.drawGrid();
     this.drawCircle();
     this.initEvents();
-    
   }
 
-
- 
-
-  
+  // Draw in a first context the grid
   drawGrid(){
     this.gridCtx.clearRect(0, 0, 10000, 1000);
     this.gridCtx.rect(0, 0, 800, 700);
@@ -40,6 +35,7 @@ class View {
 
   }
 
+  // Dig the holes of the grid (first context)
   drawCircle(){
     let x = 100;
     let y;
@@ -57,6 +53,7 @@ class View {
     }
   }
 
+  // Bindings
   bindFindFirstEmptySpot(callback){
     this.findFirstEmptySpot = callback;
   }
@@ -89,20 +86,26 @@ class View {
     this.setBotTurn = callback;
   }
 
+  bindPlayBotTurn(callback){
+    this.playBotTurn = callback;
+  }
+
+  // Move a token up
   bounceToken(y, row, color){
     this.tokensCtx.beginPath();
-    this.tokensCtx.clearRect(0, 0, 10000, 10000);
+    this.tokensCtx.clearRect((row + 1) * 100 - 40, 0, 80, y + 50);
     this.tokensCtx.closePath();
     this.tokensCtx.fillStyle = 'white';
     this.tokensCtx.fill();
 
     this.tokensCtx.beginPath();
-    this.tokensCtx.arc(100*(1+row), y - 10, 40, 0, Math.PI*2, true);
+    this.tokensCtx.arc(100*(row + 1), y - 10, 40, 0, Math.PI*2, true);
     this.tokensCtx.closePath();
     this.tokensCtx.fillStyle = color;
     this.tokensCtx.fill();
   }
 
+  // Move a token down
   moveToken(y, row, color){
     this.tokensCtx.beginPath();
     this.tokensCtx.clearRect((row + 1) * 100 - 40, 0, 80, y + 50);
@@ -117,8 +120,8 @@ class View {
     this.tokensCtx.fill();
   }
   
+  // Main graphical function that display the new token and make it fall & bounce
   async addToken(line, row, player){
-    console.log("addToken parameters :" + line + row + player);
     let color;
     if (player == 1) color = 'red';
     else color = 'yellow';
@@ -129,26 +132,42 @@ class View {
     this.tokensCtx.fillStyle = color;
     this.tokensCtx.fill();
 
+    // Fall of the token
     while (y <= (line + 1) * 100 - 10 && y < 600){
       await sleep(10);
       this.moveToken(y, row, color);
       y += 10;
     }
+
+    // Bounce of the token
+    while (y >= (line) * 100 - 10 && y <= 600){
+      await sleep(20);
+      this.bounceToken(y, row, color);
+      y -= 10;
+    }
+
+    // Second fall of the token
+    while (y <= (line + 1) * 100 - 10 && y < 600){
+      this.moveToken(y, row, color);
+      y += 10;
+    }
   }
 
-    applyOptions(){
+  // Apply the options selected in the menu
+  applyOptions(){
     let IA = document.getElementById("ia");
     let firstPlayer = document.getElementById("select_player").value;
 
     if(IA.checked)
     {
-      if (firstPlayer=1)
+      if (firstPlayer==1)
         console.log("IA doit commencer");
       else
         console.log("L'humain doit commencer");
     }
-  
+  }
 
+  // Initialize the event listeners
   initEvents(){
     let b0 = document.getElementById("b0");
     b0.addEventListener('click', () => {
@@ -197,11 +216,16 @@ class View {
     applyTheOptions.addEventListener('click', () => {
       this.applyOptions();
     })
+
+    let playAI = document.getElementById("play_AI");
+    playAI.addEventListener('click', () => {
+      this.playBotTurn();
+    })
 }
 
 }
 
-
+// Sleep function used to set a delta time between each canvas' update
 function sleep(time){
   return new Promise((resolve, reject) => {
     setTimeout(() => {
