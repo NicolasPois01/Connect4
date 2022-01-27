@@ -175,7 +175,7 @@ class Model {
         return maxConnectedTokens;
     }
 
-    // Read a board game and return a score depending on the number of connected tokens from each player
+    // Read a board game and return a s&core depending on the number of connected tokens from each player
     evaluatePosisition(){
 
         if (this.checkTie()) return 0;
@@ -216,7 +216,7 @@ class Model {
                         break;
                 }
             }
-        }
+        }4
         globalScore = firstPlayerScore - secondPlayerScore;
         return globalScore;
     }
@@ -258,7 +258,6 @@ class Model {
         if (depth == 0 || this.checkWin(1) || this.checkWin(2)){
             return this.evaluatePosisition();
         }
-
         let maxEval;
         let minEval;
         let evaluation;
@@ -269,7 +268,6 @@ class Model {
         if (maximizingPlayerOne){
             maxEval = -Infinity;
             player = 1;
-
             rows = this.getAvailableRow();
             for (let row of rows){
                 line = this.findFirstEmptySpot(row);
@@ -349,7 +347,7 @@ class Model {
         this.setMatrixElement(finalLine, botPlay, this.botTurn);
         await this.addToken(finalLine, botPlay, this.botTurn);
         this.gameOver = this.checkWin(this.botTurn);
-        if (this.gameOver) console.log("Player " + this.botTurn + " won !");
+        if (this.gameOver) alert("Player " + this.botTurn + " won !");
         this.firstPlayerToPlay = !this.firstPlayerToPlay;
     }
 
@@ -372,13 +370,11 @@ class Model {
 
         this.setMatrixElement(line , row, player);
 
-        console.log("Eval : " + this.evaluatePosisition());
-
         await this.addToken(line, row, player);
 
         this.gameOver = this.checkWin(player);
 
-        if (this.gameOver) console.log("Player " + player + " won !");
+        if (this.gameOver) alert("Player " + player + " won !");
 
         this.firstPlayerToPlay = !this.firstPlayerToPlay;
     }
